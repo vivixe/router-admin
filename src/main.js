@@ -1,15 +1,18 @@
 /*
  * @Author: vivi.
  * @Date: 2022-07-12 18:23:39
- * @LastEditTime: 2022-07-12 18:45:01
+ * @LastEditTime: 2022-07-19 18:31:02
  * @FilePath: \router-admin\src\main.js
  * @Description: 
  */
 import Vue from 'vue'
 import App from './App.vue'
 import router from '@/router/index.js';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
 
 Vue.config.productionTip = false
+Vue.use(ElementUI);
 
 new Vue({
   render: h => h(App),
