@@ -1,13 +1,13 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-16 17:51:58
- * @LastEditTime: 2022-07-19 18:38:05
- * @FilePath: \router-admin\src\components\MyHome.vue
+ * @LastEditTime: 2022-08-09 18:07:31
+ * @FilePath: \back-stage\src\components\MyHome.vue
  * @Description: 
 -->
 <template>
   <div class="home-container">
-    <MyHeader></MyHeader>
+    <!-- <MyHeader></MyHeader> -->
     <div class="home-main-body">
       <MyAside></MyAside>
       <div class="home-main-content">
@@ -20,12 +20,12 @@
 
 <script>
 //导入头部组件
-import MyHeader from '@/components/subcomponents/MyHeader.vue'
+// import MyHeader from '@/components/subcomponents/MyHeader.vue'
 //导入边栏组件
 import MyAside from '@/components/subcomponents/MyAside.vue'
 export default {
   components: {
-    MyHeader,
+    // MyHeader,
     MyAside
   },
   data() {
@@ -38,28 +38,26 @@ export default {
 
 <style lang="less" scoped>
 .home-container {
-  display: flex;
-  flex-direction: column;
-  height: 90vh;
-  // width: 95%;
+  
   .home-main-body {
     display: flex;
     flex-direction: row;
     height: 100%;
     width: 100%;
-    overflow: hidden;
-    background-color: #f5f5f5;
+    // overflow: hidden;
+    
     .home-aside {
-      width: 200px;
+      width: 80px;
       height: 100%;
       background-color: #fff;
       overflow: auto;
     }
     .home-main-content {
       flex: 1;
-      height: 100%;
-      background-color: #fff;
+      height: 90vh;
+      background-color: #f7f7f7;
       overflow: auto;
+      border-radius: 0 24px 24px 0;
     }
   }
 }

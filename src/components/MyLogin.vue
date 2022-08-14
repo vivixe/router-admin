@@ -1,133 +1,266 @@
-<!--
- * @Author: vivi.
- * @Date: 2022-07-15 17:34:22
- * @LastEditTime: 2022-07-15 19:39:08
- * @FilePath: \router-admin\src\components\MyLogin.vue
- * @Description: 
--->
 <template>
-  <div class="container">
-    <!-- 登录表单 -->
-    <form @submit.prevent="login">
-      <div class="form-group">
-        <label for="exampleInputEmail1">用户名</label>
-        <input
-          type="text"
-          class="form-control"
-          v-model.trim="username"
-          placeholder="请输入用户名"
-        />
-      </div>
-      <div class="form-group">
-        <label for="exampleInputPassword1">密&emsp;码</label>
-        <input
-          type="password"
-          class="form-control"
-          v-model.trim="password"
-          placeholder="请输入密码"
-        />
-      </div>
-      <div class="form-button">
-        <button type="button" class="btn btn-primary" @click="login">登录</button>
-        <button type="button" class="btn btn-reset" @click="reset">重置</button>
-      </div>
-    </form>
+  <div class="login-main">
+    <div class="login-title">
+      <span class="login-title-main">万华软件公司后台管理系统</span>
+      <span class="login-title-sub">Make Management Easier</span>
+    </div>
+    <div class="main-learn-more">
+      <button class="learn-more" @click="ToAboutMe">
+        <span class="circle" aria-hidden="true">
+          <span class="icon arrow"></span>
+        </span>
+        <span class="button-text">About Me</span>
+      </button>
+    </div>
+    <div class="login-container">
+      <a-form id="components-form-demo-normal-login">
+        <a-form-item>
+          <a-input
+            v-decorator="[
+              'userName',
+              {
+                rules: [
+                  { required: true, message: 'Please input your username!' },
+                ],
+              },
+            ]"
+            placeholder="用户名"
+            v-model.trim="username"
+          >
+            <a-icon
+              slot="prefix"
+              type="user"
+              style="color: rgba(0, 0, 0, 0.25)"
+            />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-input
+            v-decorator="[
+              'password',
+              {
+                rules: [
+                  { required: true, message: 'Please input your Password!' },
+                ],
+              },
+            ]"
+            type="password"
+            placeholder="密码"
+            v-model.trim="password"
+          >
+            <a-icon
+              slot="prefix"
+              type="lock"
+              style="color: rgba(0, 0, 0, 0.25)"
+            />
+          </a-input>
+        </a-form-item>
+        <a-form-item>
+          <a-checkbox
+            v-decorator="[
+              'remember',
+              {
+                valuePropName: 'checked',
+                initialValue: true,
+              },
+            ]"
+            v-model="checked"
+          >
+            记住我
+          </a-checkbox>
+          <a class="login-form-forgot" href=""> 忘记密码 </a>
+          <a-button type="primary" class="login-form-button" @click="Userlogin">
+            登录
+          </a-button>
+
+          <router-link to="/reguser"> 立即注册！</router-link> 
+        </a-form-item>
+      </a-form>
+    </div>
   </div>
 </template>
 
 <script>
+import { LoginAPI } from '@/api/user/UserLoginAPI.js'
+const Base64 = require("js-base64").Base64;
 export default {
+  beforeCreate() {
+    this.form = this.$form.createForm(this, { name: 'normal_login' })
+  },
   data() {
     return {
       username: '',
       password: '',
+      checked: false,
     }
   },
   methods: {
-    login() {
-      if(this.username==='' || this.password==='') {
-        alert('用户名或密码不能为空')
-        return
-      }
-      if(this.username==='admin' && this.password==='admin') {
-      //存储token
-        localStorage.setItem('token', 'admin')
-        //跳转到首页
+    async Userlogin() {
+      const { data: res } = await LoginAPI(this.username, this.password)
+      if (res.status === 0) {
+        // 登录成功
+        this.$message.success('登录成功')
+        //存储id和token
+        localStorage.setItem('id', res.id)
+        localStorage.setItem('token', res.token)
+        if(this.checked){
+          let password = Base64.encode(this.password)
+          localStorage.setItem('username', this.username)
+          localStorage.setItem('password', password)
+        }
+        // 跳转到首页
         this.$router.push('/home')
       } else {
-        localStorage.removeItem('token')
-        alert('用户名或密码错误')
+        // 登录失败
+        alert(res.message)
       }
     },
-    reset() {
-      this.username = ''
-      this.password = ''
+    ToAboutMe() {
+      window.open('https://vivixe.github.io/index.html#about', '_blank')
     },
   },
-}
-</script>
-
-<style lang="less" scoped>
-.container {
-  width: 400px;
-  height: 130px;
-  margin: 300px auto;
-  padding: 60px 20px;
-  border-radius: 25px;
-  background: #a5a6b1;
-  box-shadow: 22px 22px 56px #898a93, -22px -22px 56px #c1c2cf;
-  .form-group {
-    margin-bottom: 15px;
-    font-size: 22px;
-    font-weight: 300;
-    color: #002fa7;
-    input {
-      margin-left: 15px;
-      width: 70%;
-      height: 40px;
-      border-radius: 25px;
-      border: 1px solid #ccc;
-      padding: 0 15px;
-      font-size: 22px;
-      font-weight: 300;
-      transition: 0.7s;
-      &:focus {
-        outline: 1px solid #002fa7;
-      }
+  mounted(){
+    if(localStorage.getItem('username')){
+      this.username = localStorage.getItem('username')
+      this.password = Base64.decode(localStorage.getItem('password'))
+      this.checked = true
     }
   }
-  .form-button {
-    display: flex;
-    justify-content: center;
-    .btn {
-      display: block;
-      margin: 0 15px;
-      width: 20%;
-      height: 40px;
-      border-radius: 25px;
-      border: 0px solid #ccc;
-      font-size: 22px;
-      font-weight: 300;
-      cursor: pointer;
-      transition: 0.7s;
-    }
-    .btn-primary {
-      border: 1px solid #002fa7;
-      background: #002fa7;
-      color: #fff;
-      &:hover {
-        background: #001880;
-      }
-    }
-    .btn-reset {
-      border: 1px solid #fff;
-      background: #fff;
-      color: #002fa7;
-      &:hover {
-        border: 1px solid #002fa7;
-        color: #002fa7;
-      }
-    }
+}
+</script>
+<style lang="less" scoped>
+#components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .login-form-button {
+  width: 100%;
+}
+.login-container {
+  width: 400px;
+  height: 350px;
+  /* margin: 300px auto; */
+  position: absolute;
+  top: 45%;
+  left: 65%;
+  transform: translateY(-50%);
+  padding: 60px 20px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  background-color: #fff;
+}
+.login-title {
+  text-align: center;
+  font-size: 40px;
+  position: absolute;
+  top: 15%;
+  left: 15%;
+  display: flex;
+  color: #2c2c34;
+  flex-direction: column;
+  .login-title-main {
+    // font-size: 30px;
+    font-weight: bold;
+  }
+  .login-title-sub {
+    font-size: 40px;
+    font-weight: 300;
+  }
+}
+.main-learn-more {
+  position: absolute;
+  top: 65%;
+  left: 17%;
+  /* From uiverse.io */
+  button {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    outline: none;
+    border: 0;
+    vertical-align: middle;
+    text-decoration: none;
+    background: transparent;
+    padding: 0;
+    font-size: inherit;
+    font-family: inherit;
+  }
+
+  button.learn-more {
+    width: 12rem;
+    height: auto;
+  }
+
+  button.learn-more .circle {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: relative;
+    display: block;
+    margin: 0;
+    width: 3rem;
+    height: 3rem;
+    background: #1890ff;
+    border-radius: 1.625rem;
+  }
+
+  button.learn-more .circle .icon {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    background: #fff;
+  }
+
+  button.learn-more .circle .icon.arrow {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    left: 0.625rem;
+    width: 1.125rem;
+    height: 0.125rem;
+    background: none;
+  }
+
+  button.learn-more .circle .icon.arrow::before {
+    position: absolute;
+    content: '';
+    top: -0.29rem;
+    right: 0.0625rem;
+    width: 0.625rem;
+    height: 0.625rem;
+    border-top: 0.125rem solid #fff;
+    border-right: 0.125rem solid #fff;
+    transform: rotate(45deg);
+  }
+
+  button.learn-more .button-text {
+    transition: all 0.45s cubic-bezier(0.65, 0, 0.076, 1);
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem 0;
+    margin: 0 0 0 1.85rem;
+    color: #1890ff;
+    font-weight: 700;
+    line-height: 1.6;
+    text-align: center;
+    text-transform: uppercase;
+  }
+
+  button:hover .circle {
+    width: 100%;
+  }
+
+  button:hover .circle .icon.arrow {
+    background: #fff;
+    transform: translate(1rem, 0);
+  }
+
+  button:hover .button-text {
+    color: #fff;
   }
 }
 </style>
