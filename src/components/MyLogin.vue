@@ -95,25 +95,43 @@ export default {
     }
   },
   methods: {
-    async Userlogin() {
-      const { data: res } = await LoginAPI(this.username, this.password)
-      if (res.status === 0) {
-        // 登录成功
-        this.$message.success('登录成功')
-        //存储id和token
-        localStorage.setItem('id', res.id)
-        localStorage.setItem('token', res.token)
-        if(this.checked){
-          let password = Base64.encode(this.password)
-          localStorage.setItem('username', this.username)
-          localStorage.setItem('password', password)
+    // async Userlogin() {
+    //   const { data: res } = await LoginAPI(this.username, this.password)
+    //   if (res.status === 0) {
+    //     // 登录成功
+    //     this.$message.success('登录成功')
+    //     //存储id和token
+    //     localStorage.setItem('id', res.id)
+    //     localStorage.setItem('token', res.token)
+    //     if(this.checked){
+    //       let password = Base64.encode(this.password)
+    //       localStorage.setItem('username', this.username)
+    //       localStorage.setItem('password', password)
+    //     }
+    //     // 跳转到首页
+    //     this.$router.push('/home')
+    //   } else {
+    //     // 登录失败
+    //     alert(res.message)
+    //   }
+    // },
+    UserLogin() {
+      return LoginAPI(this.username,this.password).then((res) =>{
+        if(res.status === 0){
+          this.$message.success('登录成功！',1000)
+          localStorage.setItem('id', res.id)
+          localStorage.setItem('token', res.token)
+          if(this.checked){
+            let password = Base64.encode(this.password)
+            localStorage.setItem('username', this.username)
+            localStorage.setItem('password', password)
+          }
+          this.$router.push('/home')
+        }else{
+          this.$message.error(res.message)
         }
-        // 跳转到首页
-        this.$router.push('/home')
-      } else {
-        // 登录失败
-        alert(res.message)
-      }
+        
+      })
     },
     ToAboutMe() {
       window.open('https://vivixe.github.io/index.html#about', '_blank')

@@ -1,8 +1,8 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-26 18:58:17
- * @LastEditTime: 2022-09-20 13:54:50
- * @FilePath: \back-stage\src\components\menus\MyIndex.vue
+ * @LastEditTime: 2022-12-06 17:36:19
+ * @FilePath: \router-admin\src\components\menus\MyIndex.vue
  * @Description: 
 -->
 <template>
@@ -74,7 +74,7 @@
             <template>
               <a-table
                 :columns="columns"
-                :data-source="data"
+                :data-source="dataSource"
                 :pagination="{ pageSize: 2 }"
                 :rowKey="(row) => row.id"
                 style="padding: 0 20px"
@@ -202,6 +202,10 @@
 </template>
 
 <script>
+import lineChartOptions from '@/data/lineChartOptions'
+import PineOptions from '@/data/pineOptions'
+import smoothChartOptions from '@/data/smoothChartOptions'
+
 import { getProgramListAPI } from '@/api/program/ProgramInfoAPI'
 const columns = [
   {
@@ -242,150 +246,20 @@ const data = []
 export default {
   data() {
     return {
-      data,
+      dataSource:[],
       columns,
       dateFormat: 'DD',
       weekFormat: 'WW',
       monthFormat: 'MM',
-      lineChartOptions: {
-        title: {
-          text: '   近期收入',
-          left: 'left',
-          top: 10,
-          margin: 10,
-          textStyle: {
-            color: '#333',
-          },
-        },
-        tooltip: {
-          trigger: 'axis',
-        },
-        legend: {
-          data: ['收入'],
-          top: 30,
-          textStyle: {
-            color: '#ccc',
-          },
-        },
-        grid: {
-          left: '3%',
-          right: '4%',
-          bottom: '3%',
-          containLabel: true,
-        },
-        xAxis: {
-          type: 'category',
-          boundaryGap: false,
-          data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
-          axisLine: {
-            lineStyle: {
-              color: '#ccc',
-            },
-          },
-        },
-        yAxis: {
-          type: 'value',
-          axisLine: {
-            lineStyle: {
-              color: '#ccc',
-            },
-          },
-        },
-        series: [
-          {
-            name: '收入',
-            type: 'line',
-            smooth: true,
-            stack: '总量',
-            areaStyle: {},
-            data: [220, 152, 131, 174, 90, 230, 210],
-          },
-        ],
-      },
-      PineOptions: {
-        tooltip: {
-          trigger: 'item',
-        },
-        legend: {
-          top: '5%',
-          left: 'center',
-          show: false,
-        },
-        series: [
-          {
-            name: 'Access From',
-            type: 'pie',
-            radius: ['60%', '90%'],
-            avoidLabelOverlap: false,
-            label: {
-              show: false,
-              position: 'center',
-            },
-            emphasis: {
-              label: {
-                show: true,
-                fontSize: '15',
-                fontWeight: 'bold',
-              },
-            },
-            labelLine: {
-              show: false,
-            },
-            data: [
-              { value: 1048, name: 'Search Engine' },
-              { value: 735, name: 'Direct' },
-              { value: 580, name: 'Email' },
-              { value: 484, name: 'Union Ads' },
-              { value: 300, name: 'Video Ads' },
-            ],
-          },
-        ],
-      },
-      smoothChartOptions: {
-        yAxis: {
-          type: 'category',
-          data: ['卷卷狗', '肥肥狗', '电子狗', '困困狗'],
-        },
-        xAxis: {
-          type: 'value',
-        },
-        series: [
-          {
-            data: [
-              {
-                value: 84,
-                itemStyle: {
-                  color: '#8db7d0',
-                },
-              },
-              {
-                value: 45,
-                itemStyle: {
-                  color: '#585697',
-                },
-              },
-              {
-                value: 90,
-                itemStyle: {
-                  color: '#4d62a3',
-                },
-              },
-              {
-                value: 30,
-                itemStyle: {
-                  color: '#ad5a56',
-                },
-              },
-            ],
-
-            type: 'bar',
-            barWidth: 20,
-          },
-        ],
-      },
+      lineChartOptions: lineChartOptions,
+      PineOptions: PineOptions,
+      smoothChartOptions: smoothChartOptions,
     }
   },
   created() {
+    
+  },
+  mounted() {
     this.getProInfo()
   },
   methods: {
@@ -395,9 +269,14 @@ export default {
     onSearch(value) {
       console.log(value)
     },
-    async getProInfo() {
-      const { data: res } = await getProgramListAPI()
-      this.data = res.data
+    getProInfo() {
+      // const { data: res } = await getProgramListAPI()
+      // this.data = res.data
+      return getProgramListAPI().then(res=>{
+        var redata = res.data
+        console.log('%c getProInfo', 'color:#09f;font-size:20px;', redata)
+        this.dataSource = redata
+      })
     },
     toAboutMe() {
       this.$router.push('/home/aboutMe')
