@@ -5,7 +5,7 @@
  * @FilePath: \router-admin\src\data\pineOptions.js
  * @Description: 
  */
-export const pineOptions = {
+const pineOptions = {
   tooltip: {
     trigger: 'item',
   },
@@ -44,3 +44,5 @@ export const pineOptions = {
     },
   ],
 }
+
+module.exports = {pineOptions}

@@ -22,7 +22,7 @@
 //导入头部组件
 // import MyHeader from '@/components/subcomponents/MyHeader.vue'
 //导入边栏组件
-import MyAside from '@/components/subcomponents/MyAside.vue'
+import MyAside from '@/layout/MyAside.vue'
 export default {
   components: {
     // MyHeader,

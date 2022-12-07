@@ -14,6 +14,7 @@ import Antd from 'ant-design-vue';
 import 'ant-design-vue/dist/antd.css';
 import 'echarts'
 import ECharts from 'vue-echarts'
+import HModal from './components/hModal'
 Vue.prototype.$echarts = window.echarts;
 Vue.prototype.$base64Img = (e)=>{
   return new Promise(function(resolve,) {      //使用Promise进行异步处理
@@ -41,7 +42,7 @@ Vue.component('ECharts', ECharts)
 Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(Antd);
-
+Vue.use(HModal)
 
 
 new Vue({

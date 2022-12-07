@@ -5,7 +5,7 @@
  * @FilePath: \router-admin\src\data\lineChartOptions.js
  * @Description: 
  */
-export const lineChartOptions = {
+const lineChartOptions = {
   title: {
     text: '   近期收入',
     left: 'left',
@@ -61,3 +61,4 @@ export const lineChartOptions = {
   ],
 }
 
+module.exports = {lineChartOptions}

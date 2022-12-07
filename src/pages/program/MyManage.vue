@@ -245,6 +245,7 @@ export default {
         return
       }
       if (info.file.status === 'done') {
+		this.loading = false
       }
     },
     async onSubmit() {

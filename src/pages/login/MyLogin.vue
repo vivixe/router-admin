@@ -1,7 +1,7 @@
 <template>
   <div class="login-main">
     <div class="login-title">
-      <span class="login-title-main">万华软件公司后台管理系统</span>
+      <!-- <span class="login-title-main">万华软件公司后台管理系统</span> -->
       <span class="login-title-sub">Make Management Easier</span>
     </div>
     <div class="main-learn-more">
@@ -69,7 +69,7 @@
             记住我
           </a-checkbox>
           <a class="login-form-forgot" href=""> 忘记密码 </a>
-          <a-button type="primary" class="login-form-button" @click="Userlogin">
+          <a-button type="primary" class="login-form-button" @click="handleLogin">
             登录
           </a-button>
 
@@ -115,12 +115,14 @@ export default {
     //     alert(res.message)
     //   }
     // },
-    UserLogin() {
+    handleLogin() {
       return LoginAPI(this.username,this.password).then((res) =>{
-        if(res.status === 0){
+		console.log(res)
+		var redata = res.data
+        if(redata.status === 0){
           this.$message.success('登录成功！',1000)
-          localStorage.setItem('id', res.id)
-          localStorage.setItem('token', res.token)
+          localStorage.setItem('id', redata.id)
+          localStorage.setItem('token', redata.token)
           if(this.checked){
             let password = Base64.encode(this.password)
             localStorage.setItem('username', this.username)

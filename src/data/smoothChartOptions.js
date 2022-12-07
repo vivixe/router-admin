@@ -5,7 +5,7 @@
  * @FilePath: \router-admin\src\data\smoothChartOptions.js
  * @Description: 
  */
-export const smoothChartOptions = {
+const smoothChartOptions = {
   yAxis: {
     type: 'category',
     data: ['卷卷狗', '肥肥狗', '电子狗', '困困狗'],
@@ -47,3 +47,5 @@ export const smoothChartOptions = {
     },
   ],
 }
+
+module.exports = {smoothChartOptions}

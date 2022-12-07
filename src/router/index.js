@@ -8,18 +8,18 @@
 import Vue from "vue";
 import VueRouter from 'vue-router'
 //导入组件  
-import Login from '@/components/MyLogin.vue'
-import Home from '@/components/MyHome.vue'
-import Users from'@/components/menus/MyUsers.vue'
-import Salary from'@/components/menus/MySalary.vue'
-import Orders from'@/components/menus/MyOrders.vue'
-import Manage from'@/components/menus/MyManage.vue'
-import Index from'@/components/menus/MyIndex.vue'
-import Settings from'@/components/menus/MySettings.vue'
-import UserDetail from '@/components/user/MyUserDetail.vue'
-import UserEdit from '@/components/user/MyUserEdit.vue'
-import Reguser from '@/components/MyReguser.vue'
-import AboutMe from '@/components/menus/tables/AboutMe.vue';
+import Login from '@/pages/login/MyLogin.vue'
+import Home from '@/pages/home/MyHome.vue'
+import Users from'@/pages/user/MyUsers.vue'
+import Salary from'@/pages/salary/MySalary.vue'
+import Orders from'@/pages/program/MyOrders.vue'
+import Manage from'@/pages/program/MyManage.vue'
+import Index from'@/pages/home/MyIndex.vue'
+import Settings from'@/pages/setting/MySettings.vue'
+import UserDetail from '@/pages/user/MyUserDetail.vue'
+import UserEdit from '@/pages/user/MyUserEdit.vue'
+import Reguser from '@/pages/register/MyReguser.vue'
+import AboutMe from '@/pages/aboutMe/AboutMe.vue';
 Vue.use(VueRouter)
 
 const router = new VueRouter({

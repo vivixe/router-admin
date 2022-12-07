@@ -40,7 +40,7 @@
         <div class="index-main-table-tags">
           <div
             class="table-tags-body"
-            v-for="item in data.slice(0, 4)"
+            v-for="item in filterSource"
             :key="item.id"
           >
             <div class="tags-avatar">
@@ -202,9 +202,9 @@
 </template>
 
 <script>
-import lineChartOptions from '@/data/lineChartOptions'
-import PineOptions from '@/data/pineOptions'
-import smoothChartOptions from '@/data/smoothChartOptions'
+import {lineChartOptions} from '@/data/lineChartOptions'
+import {PineOptions} from '@/data/pineOptions'
+import {smoothChartOptions} from '@/data/smoothChartOptions'
 
 import { getProgramListAPI } from '@/api/program/ProgramInfoAPI'
 const columns = [
@@ -242,11 +242,10 @@ const columns = [
     scopedSlots: { customRender: 'action' },
   },
 ]
-const data = []
 export default {
   data() {
     return {
-      dataSource:[],
+      dataSource: [],
       columns,
       dateFormat: 'DD',
       weekFormat: 'WW',
@@ -262,6 +261,11 @@ export default {
   mounted() {
     this.getProInfo()
   },
+  computed: {
+	filterSource() {
+		return this.dataSource.slice(0,4)
+	},
+  },
   methods: {
     onChange(date, dateString) {
       console.log(date, dateString)
@@ -273,7 +277,7 @@ export default {
       // const { data: res } = await getProgramListAPI()
       // this.data = res.data
       return getProgramListAPI().then(res=>{
-        var redata = res.data
+        var redata = res.data.data
         console.log('%c getProInfo', 'color:#09f;font-size:20px;', redata)
         this.dataSource = redata
       })
