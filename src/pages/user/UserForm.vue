@@ -56,7 +56,51 @@
 		data() {
 			return {
 				form: this.$form.createForm(this),
+				saveBtnLoading:false,
 			}
+		},
+		methods :{
+			handleSubmit (e) {
+				//阻止默认事件触发
+				e.preventDefault()
+			    //调用this.form.validateFields方法获取form中v-decorator中对应的values
+				this.form.validateFields((err, values) => {
+					if (!err) {
+			             // 开启页面中间的loading
+						this.$createLoading().show()
+			             // 开启保存按钮的loading
+						this.saveBtnLoading = true
+			             //formParams为最后向后端提交的对象，与后端的json格式一一对应
+						const formParams = {
+							...values
+						};
+			            // 入职时间应为当前点击提交的时间
+			            let nowDate = new Date()
+			            // 拼接为指定格式的时间
+			            let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
+						//此处打印前端要的formParams数据，检查是否一一对应
+						formParams.date = date
+						formParams.status = 'worker'
+						console.log('%c handleSubmit', 'color:#09f;font-size:20px;', formParams);
+						return addWorkerAPI(formParams).then((res) => {
+							setTimeout(() => {
+								// 关闭页面中间的loading
+								this.$createLoading().close()
+								// 停止保存按钮的loading
+								this.saveBtnLoading = false
+							}, 900)
+							if (res.data.code === 1000) {
+								this.$message.success("操作成功!",1);
+								// 关闭窗口
+								this.$emit("freshData"); // 测试成功后关闭弹窗和刷新表格
+							} else {
+								this.$message.error(res.data.message, 1);
+							}
+						});
+					}
+				});
+			}
+
 		}
 	}
 </script>
