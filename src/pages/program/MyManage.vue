@@ -199,15 +199,6 @@ import { ProgramAddAPI } from '@/api/program/ProgramAddAPI'
 //   reader.readAsDataURL(img)
 // }
 const listData = []
-// for (let i = 0; i < 4; i++) {
-//   listData.push({
-//     href: 'https://www.antdv.com/',
-//     title: `ant design vue part ${i}`,
-//     avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
-//     description: 'Ant Design.',
-//     content: 'We supply a series of design principles',
-//   })
-// }
 
 export default {
   data() {
@@ -254,15 +245,6 @@ export default {
         return
       }
       if (info.file.status === 'done') {
-        // Get this url from response in real world.
-        // const nimg = compress(info.file.originFileObj, 100, 100, 0.1)
-        // getBase64( nimg , (imageUrl) => {
-        //   this.imageUrl = imageUrl
-        //   this.loading = false
-        //   console.log(imageUrl)
-        //   console.log(info.file)
-          
-        // })
       }
     },
     async onSubmit() {
