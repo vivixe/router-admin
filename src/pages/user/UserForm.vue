@@ -55,78 +55,45 @@
 </template>
 
 <script>
-	import {
-		addWorkerAPI,
-		getWorkerInfoAPI,
-	} from '@/api/worker/Worker.js'
 	export default {
 		data() {
 			return {
 				form: this.$form.createForm(this),
-				saveBtnLoading: false,
+				saveBtnLoading:false,
 			}
 		},
-		props:{
-			id:{
-				type:String,
-				default:'',
-			},
-		},
-		mounted() {
-			
-		},
-		methods: {
-			getData() {
-				const data = {
-					id : this.id,
-					
-				}
-				getWorkerInfoAPI(data).then(res => {
-					const redata = res.data;
-					if (redata.code === 0 ) {
-						console.log('redata', redata.data)
-						this.form.setFieldsValue({
-							name: redata.data.name,
-							sex: redata.data.sex,
-							age:redata.data.age,
-							position:redata.data.position,
-							address:redata.data.address,
-						});
-					}
-				})
-			},
-			handleSubmit(e) {
+		methods :{
+			handleSubmit (e) {
 				//阻止默认事件触发
 				e.preventDefault()
-			//调用this.form.validateFields方法获取form中v-decorator中对应的values
+			    //调用this.form.validateFields方法获取form中v-decorator中对应的values
 				this.form.validateFields((err, values) => {
 					if (!err) {
-						// 开启页面中间的loading
-						// this.$createLoading().show()
-						// 开启保存按钮的loading
-						// this.saveBtnLoading = true
-						//formParams为最后向后端提交的对象，与后端的json格式一一对应
+			             // 开启页面中间的loading
+						this.$createLoading().show()
+			             // 开启保存按钮的loading
+						this.saveBtnLoading = true
+			             //formParams为最后向后端提交的对象，与后端的json格式一一对应
 						const formParams = {
 							...values
 						};
-						// 入职时间应为当前点击提交的时间
-						let nowDate = new Date()
-						// 拼接为指定格式的时间
-						let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
+			            // 入职时间应为当前点击提交的时间
+			            let nowDate = new Date()
+			            // 拼接为指定格式的时间
+			            let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
 						//此处打印前端要的formParams数据，检查是否一一对应
 						formParams.date = date
 						formParams.status = 'worker'
 						console.log('%c handleSubmit', 'color:#09f;font-size:20px;', formParams);
-						return addWorkerAPI(...formParams).then(res => {
-							console.log(res)
+						return addWorkerAPI(formParams).then((res) => {
 							setTimeout(() => {
 								// 关闭页面中间的loading
 								this.$createLoading().close()
 								// 停止保存按钮的loading
-								// this.saveBtnLoading = false
+								this.saveBtnLoading = false
 							}, 900)
-							if (res.data.code === 0) {
-								this.$message.success("操作成功!", 1);
+							if (res.data.code === 1000) {
+								this.$message.success("操作成功!",1);
 								// 关闭窗口
 								this.$emit("freshData"); // 测试成功后关闭弹窗和刷新表格
 							} else {
@@ -135,24 +102,24 @@
 						});
 					}
 				});
-			},
-			
+			}
+
 		}
 	}
 </script>
 
 <style scoped lang="less">
-	.btns-v {
-		width: 100%;
-		height: 50px;
-		position: absolute;
-		bottom: 0px;
-		left: 0px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: 0px 20px;
-		box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-		background-color: white;
-	}
+.btns-v {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  bottom: 0px;
+  left: 0px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0px 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
 </style>

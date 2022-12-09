@@ -1,7 +1,7 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-12 18:23:39
- * @LastEditTime: 2022-08-10 15:41:42
+ * @LastEditTime: 2022-12-09 19:42:51
  * @FilePath: \back-stage\src\App.vue
  * @Description: 
 -->
@@ -39,7 +39,7 @@ export default {
       top: 50%;
       left: 50%;
       transform: translate(-50%,-50%);
-      // background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+      background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
     }
   }
 </style>
