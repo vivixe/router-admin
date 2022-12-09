@@ -36,7 +36,7 @@ export const addWorkerAPI = function (...data) {
 
 export const getWorkerInfoAPI = function(id) {
 	return request({
-	    url: 'my/worker/addinfo',
+	    url: 'my/worker/getinfo',
 	    method: 'post',
 	    headers: {
 	        // 获取token
@@ -45,4 +45,29 @@ export const getWorkerInfoAPI = function(id) {
 	    },
 	    id: Qs.stringify(id)
 	})
+}
+
+export const delWorkerAPI = function(id) {
+	return request({
+	    url: 'my/worker/del',
+	    method: 'post',
+	    headers: {
+	        // 获取token
+	        'Authorization': localStorage.getItem('token'),
+	        'Content-Type': 'application/x-www-form-urlencoded'
+	    },
+	    id: Qs.stringify(id)
+	})
+}
+
+export const getWorkerListAPI = function () {
+    
+    return request({
+        url: 'my/worker/info',
+        method: 'get',
+        headers: {
+          // 获取token
+          'Authorization': localStorage.getItem('token')
+        },
+    })
 }

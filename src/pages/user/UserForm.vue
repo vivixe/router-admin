@@ -58,7 +58,7 @@
 	import {
 		addWorkerAPI,
 		getWorkerInfoAPI,
-	} from '@/api/worker/WorkerAddAPI.js'
+	} from '@/api/worker/Worker.js'
 	export default {
 		data() {
 			return {
@@ -136,7 +136,7 @@
 					}
 				});
 			},
-
+			
 		}
 	}
 </script>

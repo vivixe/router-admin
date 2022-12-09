@@ -1,8 +1,8 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-19 18:03:06
- * @LastEditTime: 2022-08-14 18:16:22
- * @FilePath: \back-stage\src\components\menus\MyUsers.vue
+ * @LastEditTime: 2022-12-09 17:33:10
+ * @FilePath: \router-admin\src\pages\user\MyUsers.vue
  * @Description: 
 -->
 <template>
@@ -39,9 +39,10 @@
 			</a-page-header>
 		</div>
 		<div class="users-table">
-			<a-table :data-source="data" :columns="columns" :pagination="{ pageSize: 8 }" :rowKey="(row) => row.id">
+			<a-table :data-source="dataSource" :columns="columns" :pagination="{ pageSize: 8 }" :rowKey="(row) => row.id">
 				<template v-slot:action slot-scope="text, record">
 					<a @click="handleEdit(record.id)">编辑</a>
+					<a @click="handleDel(record.id)" style="margin-left: 8px;">删除</a>
 				</template>
 				<div slot="filterDropdown" slot-scope="{
             setSelectedKeys,
@@ -94,33 +95,10 @@
 <script>
 	import UserForm from './UserForm.vue'
 	import {
-		getWorkerListAPI
-	} from '@/api/worker/WorkerInfoAPI.js'
-	import {
-		addWorkerAPI
-	} from '@/api/worker/WorkerAddAPI.js'
-
-	const dataAll = []
-	const data = []
-	// const CollectionCreateForm = {
-	// 	props: ['visible'],
-	// 	beforeCreate() {
-	// 		this.form = this.$form.createForm(this, {
-	// 			name: 'form_in_modal'
-	// 		})
-	// 	},
-	// 	template: `
-	//    <a-modal
-	//      :visible="visible"
-	//      title='Add a new worker'
-	//      okText='Add'
-	//      @cancel="() => { $emit('cancel') }"
-	//      @ok="() => { $emit('create') }"
-	//    >
-
-	//    </a-modal>
-	//  `,
-	// }
+		addWorkerAPI,
+		getWorkerListAPI,
+		delWorkerAPI,
+	} from '@/api/worker/Worker.js'
 	const columns = [{
 				title: 'ID',
 				dataIndex: 'id',
@@ -149,7 +127,6 @@
 					}
 				},
 			},
-			//
 			{
 				title: 'Status',
 				dataIndex: 'status',
@@ -264,14 +241,14 @@
 		export default {
 			data() {
 				return {
-					dataAll,
-					data,
+					dataAll:[],
+					dataSource:[],
 					searchText: '',
 					searchInput: null,
 					searchedColumn: '',
 					visible: false,
 					id: '',
-					columns: columns
+					columns: columns,
 					title: ''
 				}
 			},
@@ -309,22 +286,30 @@
 					this.searchText = ''
 				},
 				showAdmins() {
-					this.data = dataAll.filter((item) => item.status === 'admin')
+					this.dataSource = this.dataSource.filter((item) => item.status === 'admin')
 				},
 				resetAll() {
 					// 清空所有过滤条件
 					this.getWorkerInfo()
 				},
 				// 获取职工信息
-				async getWorkerInfo() {
-					const {
-						data: res
-					} = await getWorkerListAPI()
-					if (res.status === 0) {
-						const dataAll = res.data
-						this.data = dataAll
-					}
-				},
+				// async getWorkerInfo() {
+				// 	const {
+				// 		data: res
+				// 	} = await getWorkerListAPI()
+				// 	if (res.status === 0) {
+				// 		const dataAll = res.data
+				// 		this.data = dataAll
+				// 	}
+				// },
+				getWorkerInfo() {
+					getWorkerListAPI().then(res =>{
+						var redata = res.data
+						if(redata.status === 0 ){
+							this.dataSource = redata.data
+						}
+					})
+				}
 				handleAddWorker() {
 					// this.visible = true
 					this.title = "添加一名新员工"
@@ -334,38 +319,52 @@
 					this.id = id
 					this.title = "编辑一名员工"
 					this.$refs.formRef.visible = true
-				}
-				handleCancel() {
-					this.visible = false
 				},
-				// 添加职工的方法
-				async handleCreate() {
-					const form = this.$refs.collectionForm.form
-					await form.validateFields((err, values) => {
-						if (err) {
-							return
+				handleDel(id) {
+					this.$confirm({
+						title: '确定删除该员工吗？',
+						content: '删除后将无法恢复',
+						okText: '确定',
+						cancelText: '取消',
+						onOk: async () => {
+							const {
+								data: res
+							} = await delWorkerAPI(id)
+							if (res.status === 0) {
+								this.$message.success('删除成功')
+								this.getWorkerInfo()
+							}
 						}
-						// 入职时间应为当前点击提交的时间
-						let nowDate = new Date()
-						// 拼接为指定格式的时间
-						let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate
-							.getDate()
-						// 调用封装的添加职工信息的接口
-						addWorkerAPI(values.name, date, 'worker', values.age, values.address, values.position)
-							.then(res => {
-								if (res.data.status === 0) {
-									// 提示添加成功
-									this.$message.success('添加成功')
-									// 关闭模态框
-									this.visible = false
-									// 重新获取职工信息
-									this.getWorkerInfo()
-								}
-							})
-						// 清空表单
-						form.resetFields()
 					})
 				},
+				// //添加职工的方法
+				// async handleCreate() {
+				// 	const form = this.$refs.collectionForm.form
+				// 	await form.validateFields((err, values) => {
+				// 		if (err) {
+				// 			return
+				// 		}
+				// 		// 入职时间应为当前点击提交的时间
+				// 		let nowDate = new Date()
+				// 		// 拼接为指定格式的时间
+				// 		let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate
+				// 			.getDate()
+				// 		// 调用封装的添加职工信息的接口
+				// 		addWorkerAPI(values.name, date, 'worker', values.age, values.address, values.position)
+				// 			.then(res => {
+				// 				if (res.data.status === 0) {
+				// 					// 提示添加成功
+				// 					this.$message.success('添加成功')
+				// 					// 关闭模态框
+				// 					this.visible = false
+				// 					// 重新获取职工信息
+				// 					this.getWorkerInfo()
+				// 				}
+				// 			})
+				// 		// 清空表单
+				// 		form.resetFields()
+				// 	})
+				// },
 			},
 		}
 </script>
