@@ -40,8 +40,8 @@
 		</div>
 		<div class="users-table">
 			<a-table :data-source="data" :columns="columns" :pagination="{ pageSize: 8 }" :rowKey="(row) => row.id">
-				<template v-slot:action>
-					<a href="javascript:;">Edit</a>
+				<template v-slot:action slot-scope="text, record">
+					<a @click="handleEdit(record.id)">编辑</a>
 				</template>
 				<div slot="filterDropdown" slot-scope="{
             setSelectedKeys,
@@ -86,7 +86,7 @@
 			</a-table>
 		</div>
 		<h-modal ref="formRef" height="80%" width="80%" :title="title">
-			<user-form></user-form>
+			<user-form :id="id"></user-form>
 		</h-modal>
 	</div>
 </template>
@@ -99,7 +99,7 @@
 	import {
 		addWorkerAPI
 	} from '@/api/worker/WorkerAddAPI.js'
-	
+
 	const dataAll = []
 	const data = []
 	// const CollectionCreateForm = {
@@ -110,256 +110,264 @@
 	// 		})
 	// 	},
 	// 	template: `
- //    <a-modal
- //      :visible="visible"
- //      title='Add a new worker'
- //      okText='Add'
- //      @cancel="() => { $emit('cancel') }"
- //      @ok="() => { $emit('create') }"
- //    >
-      
- //    </a-modal>
- //  `,
+	//    <a-modal
+	//      :visible="visible"
+	//      title='Add a new worker'
+	//      okText='Add'
+	//      @cancel="() => { $emit('cancel') }"
+	//      @ok="() => { $emit('create') }"
+	//    >
+
+	//    </a-modal>
+	//  `,
 	// }
-
-	export default {
-		data() {
-			return {
-				dataAll,
-				data,
-				searchText: '',
-				searchInput: null,
-				searchedColumn: '',
-				visible: false,
-				columns: [{
-						title: 'ID',
-						dataIndex: 'id',
-						key: 'id',
-						width: '5%',
-						scopedSlots: {
-							customRender: 'id',
-						},
+	const columns = [{
+				title: 'ID',
+				dataIndex: 'id',
+				key: 'id',
+				width: '5%',
+				scopedSlots: {
+					customRender: 'id',
+				},
+			},
+			{
+				title: 'Name',
+				dataIndex: 'name',
+				key: 'name',
+				scopedSlots: {
+					filterDropdown: 'filterDropdown',
+					filterIcon: 'filterIcon',
+					customRender: 'customRender',
+				},
+				onFilter: (value, record) =>
+					record.name.toString().toLowerCase().includes(value.toLowerCase()),
+				onFilterDropdownVisibleChange: (visible) => {
+					if (visible) {
+						setTimeout(() => {
+							this.searchInput.focus()
+						}, 0)
+					}
+				},
+			},
+			//
+			{
+				title: 'Status',
+				dataIndex: 'status',
+				key: 'status',
+				scopedSlots: {
+					customRender: 'customRender',
+				},
+				filters: [{
+						text: 'Admin',
+						value: 'admin',
 					},
 					{
-						title: 'Name',
-						dataIndex: 'name',
-						key: 'name',
-						scopedSlots: {
-							filterDropdown: 'filterDropdown',
-							filterIcon: 'filterIcon',
-							customRender: 'customRender',
-						},
-						onFilter: (value, record) =>
-							record.name.toString().toLowerCase().includes(value.toLowerCase()),
-						onFilterDropdownVisibleChange: (visible) => {
-							if (visible) {
-								setTimeout(() => {
-									this.searchInput.focus()
-								}, 0)
-							}
-						},
-					},
-					//
-					{
-						title: 'Status',
-						dataIndex: 'status',
-						key: 'status',
-						scopedSlots: {
-							customRender: 'customRender',
-						},
-						filters: [{
-								text: 'Admin',
-								value: 'admin',
-							},
-							{
-								text: 'Worker',
-								value: 'worker',
-							},
-						],
-						onFilter: (value, record) => record.status.includes(value),
-					},
-					{
-						title: 'Age',
-						dataIndex: 'age',
-						key: 'age',
-						scopedSlots: {
-							filterDropdown: 'filterDropdown',
-							filterIcon: 'filterIcon',
-							customRender: 'customRender',
-						},
-						onFilter: (value, record) =>
-							record.age.toString().toLowerCase().includes(value.toLowerCase()),
-						onFilterDropdownVisibleChange: (visible) => {
-							if (visible) {
-								setTimeout(() => {
-									this.searchInput.focus()
-								})
-							}
-						},
-					},
-
-					{
-						title: 'Position',
-						dataIndex: 'position',
-						key: 'position',
-						scopedSlots: {
-							filterDropdown: 'filterDropdown',
-							filterIcon: 'filterIcon',
-							customRender: 'customRender',
-						},
-						onFilter: (value, record) =>
-							record.position
-							.toString()
-							.toLowerCase()
-							.includes(value.toLowerCase()),
-						onFilterDropdownVisibleChange: (visible) => {
-							if (visible) {
-								setTimeout(() => {
-									this.searchInput.focus()
-								})
-							}
-						},
-					},
-					{
-						title: 'Date',
-						dataIndex: 'date',
-						key: 'date',
-						scopedSlots: {
-							filterDropdown: 'filterDropdown',
-							filterIcon: 'filterIcon',
-							customRender: 'customRender',
-						},
-						onFilter: (value, record) =>
-							record.date.toString().toLowerCase().includes(value.toLowerCase()),
-						onFilterDropdownVisibleChange: (visible) => {
-							if (visible) {
-								setTimeout(() => {
-									this.searchInput.focus()
-								})
-							}
-						},
-					},
-					{
-						title: 'Address',
-						dataIndex: 'address',
-						key: 'address',
-						scopedSlots: {
-							filterDropdown: 'filterDropdown',
-							filterIcon: 'filterIcon',
-							customRender: 'customRender',
-						},
-						onFilter: (value, record) =>
-							record.address
-							.toString()
-							.toLowerCase()
-							.includes(value.toLowerCase()),
-						onFilterDropdownVisibleChange: (visible) => {
-							if (visible) {
-								setTimeout(() => {
-									this.searchInput.focus()
-								})
-							}
-						},
-					},
-					// 编辑按钮
-					{
-						title: 'Action',
-						key: 'action',
-						scopedSlots: {
-							customRender: 'action'
-						},
+						text: 'Worker',
+						value: 'worker',
 					},
 				],
-				title:''
-			}
-		},
-		components: {
-			UserForm
-		},
-		created() {
-			this.getWorkerInfo()
-		},
-		methods: {
-			gotoDetail(row) {
-				this.$router.push({
-					path: '/home/userinfo/' + row.id,
-					// query: {
-					//   id: row.id,
-					// },
-				})
+				onFilter: (value, record) => record.status.includes(value),
 			},
-			editUser(row) {
-				this.$router.push({
-					path: '/home/edit/' + row.id,
-					// query: {
-					//   id: row.id,
-					// },
-				})
-			},
-			handleSearch(selectedKeys, confirm, dataIndex) {
-				confirm()
-				this.searchText = selectedKeys[0]
-				this.searchedColumn = dataIndex
+			{
+				title: 'Age',
+				dataIndex: 'age',
+				key: 'age',
+				scopedSlots: {
+					filterDropdown: 'filterDropdown',
+					filterIcon: 'filterIcon',
+					customRender: 'customRender',
+				},
+				onFilter: (value, record) =>
+					record.age.toString().toLowerCase().includes(value.toLowerCase()),
+				onFilterDropdownVisibleChange: (visible) => {
+					if (visible) {
+						setTimeout(() => {
+							this.searchInput.focus()
+						})
+					}
+				},
 			},
 
-			handleReset(clearFilters) {
-				clearFilters()
-				this.searchText = ''
+			{
+				title: 'Position',
+				dataIndex: 'position',
+				key: 'position',
+				scopedSlots: {
+					filterDropdown: 'filterDropdown',
+					filterIcon: 'filterIcon',
+					customRender: 'customRender',
+				},
+				onFilter: (value, record) =>
+					record.position
+					.toString()
+					.toLowerCase()
+					.includes(value.toLowerCase()),
+				onFilterDropdownVisibleChange: (visible) => {
+					if (visible) {
+						setTimeout(() => {
+							this.searchInput.focus()
+						})
+					}
+				},
 			},
-			showAdmins() {
-				this.data = dataAll.filter((item) => item.status === 'admin')
+			{
+				title: 'Date',
+				dataIndex: 'date',
+				key: 'date',
+				scopedSlots: {
+					filterDropdown: 'filterDropdown',
+					filterIcon: 'filterIcon',
+					customRender: 'customRender',
+				},
+				onFilter: (value, record) =>
+					record.date.toString().toLowerCase().includes(value.toLowerCase()),
+				onFilterDropdownVisibleChange: (visible) => {
+					if (visible) {
+						setTimeout(() => {
+							this.searchInput.focus()
+						})
+					}
+				},
 			},
-			resetAll() {
-				// 清空所有过滤条件
-				this.getWorkerInfo()
+			{
+				title: 'Address',
+				dataIndex: 'address',
+				key: 'address',
+				scopedSlots: {
+					filterDropdown: 'filterDropdown',
+					filterIcon: 'filterIcon',
+					customRender: 'customRender',
+				},
+				onFilter: (value, record) =>
+					record.address
+					.toString()
+					.toLowerCase()
+					.includes(value.toLowerCase()),
+				onFilterDropdownVisibleChange: (visible) => {
+					if (visible) {
+						setTimeout(() => {
+							this.searchInput.focus()
+						})
+					}
+				},
 			},
-			// 获取职工信息
-			async getWorkerInfo() {
-				const {
-					data: res
-				} = await getWorkerListAPI()
-				if (res.status === 0) {
-					const dataAll = res.data
-					this.data = dataAll
+			// 编辑按钮
+			{
+				title: 'Action',
+				key: 'action',
+				scopedSlots: {
+					customRender: 'action'
+				},
+			},
+		]
+		
+		export default {
+			data() {
+				return {
+					dataAll,
+					data,
+					searchText: '',
+					searchInput: null,
+					searchedColumn: '',
+					visible: false,
+					id: '',
+					columns: columns
+					title: ''
 				}
 			},
-			handleAddWorker() {
-				// this.visible = true
-				this.title = "添加一名新员工"
-				this.$refs.formRef.visible = true
+			components: {
+				UserForm
 			},
-			handleCancel() {
-				this.visible = false
+			created() {
+				this.getWorkerInfo()
 			},
-			// 添加职工的方法
-			async handleCreate() {
-				const form = this.$refs.collectionForm.form
-				await form.validateFields((err, values) => {
-					if (err) {
-						return
+			methods: {
+				gotoDetail(row) {
+					this.$router.push({
+						path: '/home/userinfo/' + row.id,
+						// query: {
+						//   id: row.id,
+						// },
+					})
+				},
+				editUser(row) {
+					this.$router.push({
+						path: '/home/edit/' + row.id,
+						// query: {
+						//   id: row.id,
+						// },
+					})
+				},
+				handleSearch(selectedKeys, confirm, dataIndex) {
+					confirm()
+					this.searchText = selectedKeys[0]
+					this.searchedColumn = dataIndex
+				},
+
+				handleReset(clearFilters) {
+					clearFilters()
+					this.searchText = ''
+				},
+				showAdmins() {
+					this.data = dataAll.filter((item) => item.status === 'admin')
+				},
+				resetAll() {
+					// 清空所有过滤条件
+					this.getWorkerInfo()
+				},
+				// 获取职工信息
+				async getWorkerInfo() {
+					const {
+						data: res
+					} = await getWorkerListAPI()
+					if (res.status === 0) {
+						const dataAll = res.data
+						this.data = dataAll
 					}
-					// 入职时间应为当前点击提交的时间
-					let nowDate = new Date()
-					// 拼接为指定格式的时间
-					let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
-					// 调用封装的添加职工信息的接口
-					addWorkerAPI(values.name, date, 'worker', values.age, values.address, values.position)
-						.then(res => {
-							if (res.data.status === 0) {
-								// 提示添加成功
-								this.$message.success('添加成功')
-								// 关闭模态框
-								this.visible = false
-								// 重新获取职工信息
-								this.getWorkerInfo()
-							}
-						})
-					// 清空表单
-					form.resetFields()
-				})
+				},
+				handleAddWorker() {
+					// this.visible = true
+					this.title = "添加一名新员工"
+					this.$refs.formRef.visible = true
+				},
+				handleEdit(id) {
+					this.id = id
+					this.title = "编辑一名员工"
+					this.$refs.formRef.visible = true
+				}
+				handleCancel() {
+					this.visible = false
+				},
+				// 添加职工的方法
+				async handleCreate() {
+					const form = this.$refs.collectionForm.form
+					await form.validateFields((err, values) => {
+						if (err) {
+							return
+						}
+						// 入职时间应为当前点击提交的时间
+						let nowDate = new Date()
+						// 拼接为指定格式的时间
+						let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate
+							.getDate()
+						// 调用封装的添加职工信息的接口
+						addWorkerAPI(values.name, date, 'worker', values.age, values.address, values.position)
+							.then(res => {
+								if (res.data.status === 0) {
+									// 提示添加成功
+									this.$message.success('添加成功')
+									// 关闭模态框
+									this.visible = false
+									// 重新获取职工信息
+									this.getWorkerInfo()
+								}
+							})
+						// 清空表单
+						form.resetFields()
+					})
+				},
 			},
-		},
-	}
+		}
 </script>
 
 <style lang="less" scoped>

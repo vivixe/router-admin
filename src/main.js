@@ -39,10 +39,11 @@ Vue.prototype.$base64Img = (e)=>{
   })  
 }
 Vue.component('ECharts', ECharts)
-Vue.config.productionTip = false
+// Vue.config.productionTip = false
 Vue.use(ElementUI);
 Vue.use(Antd);
 Vue.use(HModal)
+Vue.use(ECharts)
 
 
 new Vue({

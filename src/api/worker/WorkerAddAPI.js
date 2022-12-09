@@ -10,10 +10,7 @@ import request from '@/utils/request'
 //导入qs模块
 import Qs from 'qs'
 
-
-//添加员工
-export const addWorkerAPI = function (name,date,status,age,address,position) {
-  let data = {
+const data = {
     name,
     date,
     status,
@@ -21,6 +18,10 @@ export const addWorkerAPI = function (name,date,status,age,address,position) {
     address,
     position
   }  
+
+//添加员工
+export const addWorkerAPI = function (...data) {
+  
     return request({
         url: 'my/worker/addinfo',
         method: 'post',
@@ -31,4 +32,17 @@ export const addWorkerAPI = function (name,date,status,age,address,position) {
         },
         data: Qs.stringify(data)
     })
+}
+
+export const getWorkerInfoAPI = function(id) {
+	return request({
+	    url: 'my/worker/addinfo',
+	    method: 'post',
+	    headers: {
+	        // 获取token
+	        'Authorization': localStorage.getItem('token'),
+	        'Content-Type': 'application/x-www-form-urlencoded'
+	    },
+	    id: Qs.stringify(id)
+	})
 }

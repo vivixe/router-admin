@@ -1,25 +1,28 @@
 <template>
 	<div>
 		<a-form layout='vertical' :form="form">
-			<a-form-item label='Name'>
-				<a-input v-decorator="['name',{rules: [{ required: true, message: 'Please input the name of worker!' }],}]" />
+			<a-form-item label='姓名' has-feedback>
+				<a-input
+					v-decorator="['name',{rules: [{ required: true, message: 'Please input the name of worker!' }],}]" />
 			</a-form-item>
-			<a-form-item class=''>
+			<a-form-item label='性别' >
 				<a-radio-group v-decorator="['sex',{initialValue: 'male',}]">
-					<a-radio value='male'>Male</a-radio>
-					<a-radio value='female'>Female</a-radio>
+					<a-radio value='male'>男</a-radio>
+					<a-radio value='female'>女</a-radio>
 				</a-radio-group>
 			</a-form-item>
 
-			<a-form-item label="Age">
+			<a-form-item label="年龄" has-feedback>
 				<a-input-number v-decorator="['age', { initialValue: 18 }]" :min="18" :max="55" />
 				<span class="ant-form-text">
-					years old
+					岁
 				</span>
 			</a-form-item>
 
 			<a-form-item label="Position" has-feedback>
-				<a-select v-decorator="['position',{ rules: [{ required: true, message: 'Please select work position!' }] },]" placeholder="Please select work position">
+				<a-select
+					v-decorator="['position',{ rules: [{ required: true, message: 'Please select work position!' }] },]"
+					placeholder="Please select work position">
 					<a-select-option value="Front-end Engineer">
 						Front-end Engineer
 					</a-select-option>
@@ -38,7 +41,7 @@
 				</a-select>
 			</a-form-item>
 
-			<a-form-item label='Address'>
+			<a-form-item label='Address' has-feedback>
 				<a-input type='textarea'
 					v-decorator="['address', { rules: [{ required: true, message: 'Please input the address of worker!' }] }]" />
 			</a-form-item>
@@ -52,45 +55,78 @@
 </template>
 
 <script>
+	import {
+		addWorkerAPI,
+		getWorkerInfoAPI,
+	} from '@/api/worker/WorkerAddAPI.js'
 	export default {
 		data() {
 			return {
 				form: this.$form.createForm(this),
-				saveBtnLoading:false,
+				saveBtnLoading: false,
 			}
 		},
-		methods :{
-			handleSubmit (e) {
+		props:{
+			id:{
+				type:String,
+				default:'',
+			},
+		},
+		mounted() {
+			
+		},
+		methods: {
+			getData() {
+				const data = {
+					id : this.id,
+					
+				}
+				getWorkerInfoAPI(data).then(res => {
+					const redata = res.data;
+					if (redata.code === 0 ) {
+						console.log('redata', redata.data)
+						this.form.setFieldsValue({
+							name: redata.data.name,
+							sex: redata.data.sex,
+							age:redata.data.age,
+							position:redata.data.position,
+							address:redata.data.address,
+						});
+					}
+				})
+			},
+			handleSubmit(e) {
 				//阻止默认事件触发
 				e.preventDefault()
-			    //调用this.form.validateFields方法获取form中v-decorator中对应的values
+			//调用this.form.validateFields方法获取form中v-decorator中对应的values
 				this.form.validateFields((err, values) => {
 					if (!err) {
-			             // 开启页面中间的loading
-						this.$createLoading().show()
-			             // 开启保存按钮的loading
-						this.saveBtnLoading = true
-			             //formParams为最后向后端提交的对象，与后端的json格式一一对应
+						// 开启页面中间的loading
+						// this.$createLoading().show()
+						// 开启保存按钮的loading
+						// this.saveBtnLoading = true
+						//formParams为最后向后端提交的对象，与后端的json格式一一对应
 						const formParams = {
 							...values
 						};
-			            // 入职时间应为当前点击提交的时间
-			            let nowDate = new Date()
-			            // 拼接为指定格式的时间
-			            let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
+						// 入职时间应为当前点击提交的时间
+						let nowDate = new Date()
+						// 拼接为指定格式的时间
+						let date = nowDate.getFullYear() + '-' + (nowDate.getMonth() + 1) + '-' + nowDate.getDate()
 						//此处打印前端要的formParams数据，检查是否一一对应
 						formParams.date = date
 						formParams.status = 'worker'
 						console.log('%c handleSubmit', 'color:#09f;font-size:20px;', formParams);
-						return addWorkerAPI(formParams).then((res) => {
+						return addWorkerAPI(...formParams).then(res => {
+							console.log(res)
 							setTimeout(() => {
 								// 关闭页面中间的loading
 								this.$createLoading().close()
 								// 停止保存按钮的loading
-								this.saveBtnLoading = false
+								// this.saveBtnLoading = false
 							}, 900)
-							if (res.data.code === 1000) {
-								this.$message.success("操作成功!",1);
+							if (res.data.code === 0) {
+								this.$message.success("操作成功!", 1);
 								// 关闭窗口
 								this.$emit("freshData"); // 测试成功后关闭弹窗和刷新表格
 							} else {
@@ -99,7 +135,7 @@
 						});
 					}
 				});
-			}
+			},
 
 		}
 	}
