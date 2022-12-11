@@ -1,7 +1,7 @@
 /*
  * @Author: vivi.
  * @Date: 2022-07-12 18:23:39
- * @LastEditTime: 2022-09-05 10:59:48
+ * @LastEditTime: 2022-12-11 11:11:11
  * @FilePath: \back-stage\src\main.js
  * @Description: 
  */
@@ -11,7 +11,7 @@ import router from '@/router/index.js';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import Antd from 'ant-design-vue';
-import 'ant-design-vue/dist/antd.css';
+import 'ant-design-vue/dist/antd.less';
 import 'echarts'
 import ECharts from 'vue-echarts'
 import HModal from './components/hModal'

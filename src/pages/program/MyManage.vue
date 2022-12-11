@@ -1,8 +1,8 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-26 18:58:17
- * @LastEditTime: 2022-11-11 20:24:45
- * @FilePath: \back-stage\src\components\menus\MyManage.vue
+ * @LastEditTime: 2022-12-11 11:04:47
+ * @FilePath: \back-stage\src\pages\program\MyManage.vue
  * @Description: 
 -->
 <template>
@@ -114,8 +114,10 @@
                 v-model="form.owner"
                 placeholder="please select an owner"
               >
-                <a-select-option value="肥肥狗"> 肥肥狗 </a-select-option>
-                <a-select-option value="困困狗"> 困困狗 </a-select-option>
+                <a-select-option v-for="(item,index) in adminList" :key="index" :value="item.nickname ? item.nickname : item.username">
+                  <!-- 如果有nickname就是nickname，否则是username -->
+                  {{ item.nickname ? item.nickname : item.username }}
+                </a-select-option>
               </a-select>
             </a-form-model-item>
             <a-form-item label="小组成员">
@@ -136,9 +138,10 @@
                 mode="multiple"
                 placeholder="Please select program members"
               >
-                <a-select-option value="Hoyt Olsen"> Hoyt Olsen </a-select-option>
-                <a-select-option value="Norman Hancock"> Norman Hancock </a-select-option>
-                <a-select-option value="Beck Rios"> Beck Rios </a-select-option>
+                <a-select-option v-for="(item,index) in workerList" :key="index" :value="item.name">
+                  <!-- 如果有nickname就是nickname，否则是username -->
+                  {{ item.name }}
+                </a-select-option>
               </a-select>
             </a-form-item>
             <a-form-item label="预订报酬">
@@ -190,14 +193,8 @@
 </template>
 
 <script>
-import { getProgramListAPI } from '@/api/program/ProgramInfoAPI'
-import { ProgramAddAPI } from '@/api/program/ProgramAddAPI'
-//定义一个方法，用于压缩图片，返回新的image对象
-// function getBase64(img, callback) {
-//   const reader = new FileReader()
-//   reader.addEventListener('load', () => callback(reader.result))
-//   reader.readAsDataURL(img)
-// }
+import { getProgramListAPI,ProgramAddAPI,getAdminListAPI,getWorkerListAPI } from '@/api/program/Program.js'
+
 const listData = []
 
 export default {
@@ -235,9 +232,17 @@ export default {
       },
       fileList: [],
       current: 1,
+      loading: false,
+      adminList: [],
+      workerList: [],
     }
   },
   components: {},
+  mounted() {
+    this.getProInfo()
+    this.getAdminList()
+    this.getWorkerList()
+  },
   methods: {
     handleChange(info) {
       if (info.file.status === 'uploading') {
@@ -258,6 +263,8 @@ export default {
         '-' +
         nowDate.getDate()
       let members = this.form.members.toString()
+      // 将图片转为base64格式
+      this.imageUrl = this.getBase64(this.form.upload)
       await ProgramAddAPI(
         this.form.name,
         this.form.owner,
@@ -265,10 +272,12 @@ export default {
         members,
         this.form.earn,
         this.ndata,
+        this.imageUrl,
         '开发中',
         this.form.desc
       ).then((res) => {
         // console.log(this.imageUrl);
+        console.log(res);
         if (res.data.status === 0) {
           this.$message.success('发布成功')
           this.$router.push('/home/orders')
@@ -296,10 +305,27 @@ export default {
       console.log(res.data);
       console.log(this.listData);
     },
+    async getAdminList(){
+      const {data:res} = await getAdminListAPI()
+      if(res.status === 0){
+        this.adminList = res.data
+        console.log('%c adminList', 'color:#09f;font-size:20px;', this.adminList)
+      }
+    },
+    async getWorkerList(){
+      const {data:res} = await getWorkerListAPI()
+      if(res.status === 0){
+        this.workerList = res.data
+        console.log('%c workerList', 'color:#09f;font-size:20px;', this.workerList)
+      }
+    },
+    // 将图片转为base64格式
+    getBase64(img, callback) {
+      const reader = new FileReader()
+      reader.addEventListener('load', () => callback(reader.result))
+      reader.readAsDataURL(img)
+    },
   },
-  created(){
-    this.getProInfo()
-  }
 }
 </script>
 

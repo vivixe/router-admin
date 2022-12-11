@@ -1,11 +1,11 @@
 <template>
   <div class="login-main">
     <div class="login-title">
-      <!-- <span class="login-title-main">万华软件公司后台管理系统</span> -->
+      <span class="login-title-main">软件公司后台管理系统</span>
       <span class="login-title-sub">Make Management Easier</span>
     </div>
     <div class="main-learn-more">
-      <button class="learn-more" @click="ToAboutMe">
+      <button class="learn-more" >
         <span class="circle" aria-hidden="true">
           <span class="icon arrow"></span>
         </span>
@@ -120,7 +120,7 @@ export default {
 		console.log(res)
 		var redata = res.data
         if(redata.status === 0){
-          this.$message.success('登录成功！',1000)
+          this.$message.success('登录成功！',2)
           localStorage.setItem('id', redata.id)
           localStorage.setItem('token', redata.token)
           if(this.checked){
@@ -134,10 +134,7 @@ export default {
         }
         
       })
-    },
-    ToAboutMe() {
-      window.open('https://vivixe.github.io/index.html#about', '_blank')
-    },
+    }
   },
   mounted(){
     if(localStorage.getItem('username')){
