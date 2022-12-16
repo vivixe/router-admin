@@ -1,8 +1,8 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-12 18:23:39
- * @LastEditTime: 2022-12-11 11:24:35
- * @FilePath: \back-stage\src\App.vue
+ * @LastEditTime: 2022-12-12 09:18:00
+ * @FilePath: \router-admin\src\App.vue
  * @Description: 
 -->
 <template>
@@ -39,7 +39,8 @@ export default {
       top: 50%;
       left: 50%;
       transform: translate(-50%,-50%);
-      background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+      // background-image: linear-gradient(to top, #fff1eb 0%, #ace0f9 100%);
+      background-image: linear-gradient(to top, #cfd9df 0%, #e2ebf0 100%);
     }
   }
 </style>
