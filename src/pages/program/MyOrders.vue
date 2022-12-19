@@ -1,8 +1,8 @@
 <!--
  * @Author: vivi.
  * @Date: 2022-07-26 18:58:17
- * @LastEditTime: 2022-09-20 11:03:59
- * @FilePath: \back-stage\src\components\menus\MyOrders.vue
+ * @LastEditTime: 2022-12-17 18:07:56
+ * @FilePath: \back-stage\src\pages\program\MyOrders.vue
  * @Description: 
 -->
 <template>
@@ -78,19 +78,21 @@
 		
 		<!-- 订单展示cardlist -->
 		<div class="orders-cards">
-			<template>
-				<a-card class="cards-item" hoverable style="width: 220px" v-for="item in data.slice(0,7)" :key="item.id">
+			<template v-if="data">
+				<a-card  class="cards-item" hoverable style="width: 220px" v-for="item in programCard" :key="item.id">
 					<img v-if="item.propic" slot="cover" alt="example" :src="item.propic" />
 					<div class="cards-item-nopic" v-else slot="cover">
 						暂时还没有预览图噢！
 					</div>
-					<a-card-meta :title=item.name :description=item.status>
-						<a-avatar slot="avatar" :src="require('@/assets/headpic.jpg')" />
-					</a-card-meta>
-					<p style="padding: 30px 30px 0px 20px">开始于 {{item.time}}</p>
-					<p style="padding: 0px 30px 0px 20px; color: #1890ff">
-						收益 ￥{{item.earn}}
-					</p>
+					<div>
+						<a-card-meta style="margin-top:2px" :title=item.name :description=item.status>
+							<a-avatar slot="avatar" :src="require('@/assets/headpic.jpg')" />
+						</a-card-meta>
+						<p style="padding-top:10px">开始于 {{item.time}}</p>
+						<p style=" color: #1890ff">
+							收益 ￥{{item.earn}}
+						</p>
+					</div>
 				</a-card>
 			</template>
 		</div>
@@ -119,7 +121,7 @@
 			</div>
 			<div class="body-cards">
 				<template>
-					<a-list item-layout="horizontal" :data-source="data.slice(0,3)">
+					<a-list item-layout="horizontal" :data-source="programDemand">
 						<a-list-item slot="renderItem" slot-scope="item">
 							<a-list-item-meta :description="item.demand">
 								<a slot="title" href="https://www.antdv.com/">{{
@@ -184,24 +186,40 @@
 		},
 	]
 
-	const data = []
+	
 	export default {
 		data() {
 			return {
-				data,
+				data:[],
 				columns,
 				menuStatus: 0,
 			}
 		},
-		created() {
+		mounted() {
 			this.getProInfo()
 		},
+		computed: {
+			programCard() {
+				if (this.data) {
+					return this.data.slice(0, 7)
+				} else {
+					return []
+				}
+			},
+			programDemand() {
+				if (this.data) {
+					return this.data.slice(0, 3)
+				} else {
+					return []
+				}
+			}
+		},
 		methods: {
-			async getProInfo() {
-				const {
-					data: res
-				} = await getProgramListAPI()
-				this.data = res.data
+			getProInfo() {
+				return getProgramListAPI().then(res => {
+					console.log(res);
+					this.data = res.data.data
+				})
 			},
 			onSearch(value) {
 				console.log(value);
@@ -344,7 +362,7 @@
 
 		.orders-cards {
 			width: 89vw;
-			height: 31vh;
+			height: 32vh;
 			background-color: #fff;
 			border-radius: 8px;
 			display: flex;
@@ -365,7 +383,7 @@
 				.cards-item-nopic{
 					margin: 10px;
 					width: 10vw;
-					height: 120px;
+					height: 110px;
 					border-radius: 4px;
 					display: grid;
 					place-items: center;
@@ -408,5 +426,8 @@
 				padding-top: 10px;
 			}
 		}
+	}
+	/deep/.ant-card-body {
+		padding: 0;
 	}
 </style>
